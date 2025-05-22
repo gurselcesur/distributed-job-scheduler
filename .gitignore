@@ -134,3 +134,43 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+# Project specific
+# Docker
+.docker/
+docker-compose.override.yml
+
+# Security
+*.pem
+*.key
+*.cert
+*.crt
+*.p12
+*.pfx
+
+# Worker specific
+worker/config.local.js
+worker/credentials.json
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build artifacts
+dist/
+build/
+*.bundle.js
+
+# Test
+coverage/
+.nyc_output/
+
+# Temporary files
+tmp/
+temp/
