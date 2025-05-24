@@ -1,7 +1,3 @@
-// ===========================
-// scheduler_server.cpp
-// ===========================
-
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -14,9 +10,12 @@
 #include <netinet/in.h>
 #include <unistd.h>
 #include <arpa/inet.h>
+#include <nlohmann/json.hpp>
 
 #define SERVER_PORT 5050
 #define BUFFER_SIZE 1024
+
+using json = nlohmann::json;
 
 struct Task {
     int id;
@@ -38,17 +37,38 @@ void logMessage(const std::string& msg) {
     std::cout << timestamp << ": " << msg << std::endl;
 }
 
-void saveTasksToFile() {
-    std::ofstream out("tasks.json");
-    out << "[\n";
-    for (size_t i = 0; i < tasks.size(); ++i) {
-        out << "  {\"id\": " << tasks[i].id
-            << ", \"username\": \"" << tasks[i].username
-            << "\", \"schedule\": \"" << tasks[i].schedule
-            << "\", \"command\": \"" << tasks[i].command << "\"}";
-        if (i + 1 < tasks.size()) out << ",\n";
+void loadTasksFromFile() {
+    std::ifstream in("tasks.json");
+    if (!in.is_open()) return;
+    json j;
+    in >> j;
+    tasks.clear();
+    for (const auto& item : j) {
+        Task t;
+        t.id = item["id"].get<int>();
+        t.username = item["username"].get<std::string>();
+        t.schedule = item["schedule"].get<std::string>();
+        t.command = item["command"].get<std::string>();
+        tasks.push_back(t);
+        if (t.id >= next_task_id) {
+            next_task_id = t.id + 1;
+        }
     }
-    out << "\n]\n";
+    logMessage("Loaded tasks from file");
+}
+
+void saveTasksToFile() {
+    json j = json::array();
+    for (const auto& t : tasks) {
+        j.push_back({
+            {"id", t.id},
+            {"username", t.username},
+            {"schedule", t.schedule},
+            {"command", t.command}
+        });
+    }
+    std::ofstream out("tasks.json");
+    out << j.dump(2) << std::endl;
 }
 
 bool matchSchedule(const std::string& sched, const std::tm& tm) {
@@ -128,6 +148,7 @@ void handleClient(int sock, std::string ip) {
 }
 
 int main() {
+    loadTasksFromFile();
     std::thread(schedulerLoop).detach();
 
     int server_fd = socket(AF_INET, SOCK_STREAM, 0);

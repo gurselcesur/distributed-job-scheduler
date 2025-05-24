@@ -19,3 +19,5 @@ target_link_libraries(scheduler_client stdc++)
 # Output to src/backend/
 set_target_properties(scheduler_server PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/src/backend)
 set_target_properties(scheduler_client PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/src/backend)
+
+include_directories(${CMAKE_SOURCE_DIR}/include)

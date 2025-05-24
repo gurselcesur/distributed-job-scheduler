@@ -1,5 +1,14 @@
 [
-  {"id": 1, "username": "tanay", "schedule": "* * * * *", "command": "echo Hello from Tanay"},
-  {"id": 2, "username": "tanay", "schedule": "* * * * *", "command": "echo Hello from Tanay"},
-  {"id": 3, "username": "tanay", "schedule": "* * * * *", "command": "echo Hello from Tanay"}
+  {
+    "command": "echo Hello from Tanay",
+    "id": 1,
+    "schedule": "* * * * *",
+    "username": "tanay"
+  },
+  {
+    "command": "echo from Gursel",
+    "id": 2,
+    "schedule": "* * * * *",
+    "username": "tanay"
+  }
 ]
