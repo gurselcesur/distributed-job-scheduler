@@ -1,0 +1,5 @@
+---
+triple:          'arm64-apple-darwin'
+binary-path:     '/Users/gurselcesur/Documents/GitHub/distributed-job-scheduler/backend/scheduler_server'
+relocations:     []
+...
