@@ -174,3 +174,7 @@ coverage/
 # Temporary files
 tmp/
 temp/
+scheduler_server
+*.dSYM/
+*.dSYM
+scheduler.log
