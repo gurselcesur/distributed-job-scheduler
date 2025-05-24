@@ -36,17 +36,14 @@ export default function NewJob() {
       return;
     }
 
-    const job = { 
-      expression: schedule, 
-      command, 
-      jobName 
-    };
-
     try {
-      const res = await fetch('http://localhost:8080/add-job', {
+      const res = await fetch('http://localhost:5050/tasks', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(job),
+        body: JSON.stringify({
+          command,
+          schedule
+        })
       });
 
       if (res.ok) {

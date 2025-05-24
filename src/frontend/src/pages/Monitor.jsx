@@ -12,7 +12,7 @@ export default function Monitor() {
     setLoading(true);
     setError('');
     try {
-      const res = await fetch('http://localhost:8080/logs');
+      const res = await fetch('http://localhost:5050/logs');
       if (!res.ok) throw new Error('Failed to fetch logs');
       const data = await res.json();
       setLogs(data);
