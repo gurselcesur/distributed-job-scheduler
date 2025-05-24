@@ -1,7 +1,9 @@
 import { Link } from 'react-router-dom';
+import Header from '../components/Header';
 
 export default function Home() {
   return (
+    
     <div className="min-h-screen flex flex-col items-center justify-center bg-bg-dark text-text-main gap-12 px-4 text-center">
       <h1 className="text-9xl font-extrabold text-primary drop-shadow-lg">
         Cron Job Manager
