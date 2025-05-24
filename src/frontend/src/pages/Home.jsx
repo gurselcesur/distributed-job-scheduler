@@ -11,13 +11,13 @@ export default function Home() {
 
       <div className="flex flex-wrap justify-center gap-8">
         <Link to="/new-job">
-          <button className="w-64 py-6 text-2xl bg-primary hover:bg-primary-dark text-white rounded-2xl shadow-xl transition-transform duration-200 hover:scale-105">
+          <button className="w-64 py-6 text-2xl bg-primary hover:bg-primary-light text-white rounded-2xl shadow-xl transition-transform duration-200 hover:scale-105">
           ➕ Add New Job
           </button>
         </Link>
         <Link to="/monitor">
-          <button className="w-64 py-6 text-2xl bg-primary-light hover:bg-primary text-white rounded-2xl shadow-xl transition-transform duration-200 hover:scale-105">
-            📊 Monitor Jobs
+        <button className="w-64 py-6 text-2xl bg-primary hover:bg-primary-light text-white rounded-2xl shadow-xl transition-transform duration-200 hover:scale-105">
+        📊 Monitor Jobs
           </button>
         </Link>
       </div>

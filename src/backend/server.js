@@ -9,17 +9,17 @@ app.use(express.json());
 
 const TASKS_FILE = path.join(__dirname, 'tasks.json');
 
-// Mevcut görevleri oku
+// Read existing tasks
 app.get('/tasks', async (req, res) => {
   try {
     const data = await fs.readFile(TASKS_FILE, 'utf8');
     res.json(JSON.parse(data));
   } catch (error) {
-    res.status(500).json({ error: 'Görevler okunamadı' });
+    res.status(500).json({ error: 'Failed to read tasks' });
   }
 });
 
-// Yeni görev ekle
+// Add new task
 app.post('/tasks', async (req, res) => {
   try {
     const data = await fs.readFile(TASKS_FILE, 'utf8');
@@ -37,11 +37,11 @@ app.post('/tasks', async (req, res) => {
     
     res.json(newTask);
   } catch (error) {
-    res.status(500).json({ error: 'Görev eklenemedi' });
+    res.status(500).json({ error: 'Failed to add task' });
   }
 });
 
 const PORT = 5050;
 app.listen(PORT, () => {
-  console.log(`Server ${PORT} portunda çalışıyor`);
+  console.log(`Server running on port ${PORT}`);
 }); 

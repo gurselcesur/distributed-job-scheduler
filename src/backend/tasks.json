@@ -7,14 +7,8 @@
   },
   {
     "command": "echo Test1",
-    "id": 5,
+    "id": 2,
     "schedule": "* * * * *",
-    "username": "tanay"
-  },
-  {
-    "command": "echo Test2",
-    "id": 3,
-    "schedule": "* * * * *",
-    "username": "tanay"
+    "username": "gursel"
   }
 ]
