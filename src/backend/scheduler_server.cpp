@@ -92,6 +92,11 @@ void schedulerLoop() {
         std::time_t now = std::time(nullptr);
         std::tm tm = *std::localtime(&now);
 
+        {
+            std::lock_guard<std::mutex> lock(task_mutex);
+            loadTasksFromFile();  // <-- Refresh tasks from disk
+        }
+
         std::lock_guard<std::mutex> lock(task_mutex);
         for (const auto& task : tasks) {
             if (matchSchedule(task.schedule, tm)) {
@@ -150,7 +155,14 @@ void handleClient(int sock, std::string ip) {
         } else if (type == "LIST") {
             std::string list_user;
             cmd >> list_user;
+
+            {
+                std::lock_guard<std::mutex> lock(task_mutex);
+                loadTasksFromFile();  // Ensure latest tasks are loaded
+            }
+
             std::ostringstream out;
+            std::lock_guard<std::mutex> lock(task_mutex);
             for (const auto& t : tasks) {
                 if (t.username == list_user) {
                     out << "Task " << t.id << ": [" << t.schedule << "] " << t.command << "\n";
