@@ -31,13 +31,18 @@ void save_tasks_to_file(const char *filename) {
         log_message("Error: Unable to open tasks file for saving");
         return;
     }
+
+    fprintf(file, "[\n");
     for (int i = 0; i < task_count; ++i) {
         fprintf(file,
-            "{\"schedule\": \"%s\", \"command\": \"%s\", \"jobName\": \"task_%d\"}\n",
+            "  {\"schedule\": \"%s\", \"command\": \"%s\", \"jobName\": \"task_%d\"}%s\n",
             task_list[i].schedule,
             task_list[i].command,
-            task_list[i].id);
+            task_list[i].id,
+            (i < task_count - 1) ? "," : "");
     }
+    fprintf(file, "]\n");
+
     fclose(file);
 }
 
