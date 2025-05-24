@@ -1,0 +1,5 @@
+---
+triple:          'arm64-apple-darwin'
+binary-path:     '/Users/tanayalpkonur/Desktop/CS 350.A Operating Systems/distributed-job-scheduler/backend/scheduler_server'
+relocations:     []
+...
