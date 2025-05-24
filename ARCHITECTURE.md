@@ -1,17 +1,11 @@
 distributed-job-scheduler/
 ├── src/
 │   ├── backend/
-│   │   ├── server.js              # Express server entry point
-│   │   ├── websocket.js           # WebSocket server
-│   │   ├── routes/
-│   │   │   └── jobs.js            # /jobs endpoints
-│   │   ├── controllers/
-│   │   │   └── jobController.js   # Job addition, status etc. logic
-│   │   ├── queue/
-│   │   │   └── jobQueue.js        # In-memory job queue (Map etc.)
-│   │   └── utils/
-│   │       └── logger.js          # Simple logging mechanism
-│
+│   │   ├── scheduler_server       # executable
+│   │   ├── scheduler_server.cpp   # cpp program
+│   │   ├── scheduler.log          # a clear log for the program
+│   │   └── tasks.json             # database for the tasks
+│   │   
 │   ├── frontend/
 │   │   ├── index.html             # Main page
 │   │   ├── submit.html            # Job submission page

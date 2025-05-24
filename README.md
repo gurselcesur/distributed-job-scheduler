@@ -1,7 +1,7 @@
 # ⚙️ Distributed Job Scheduler
 
 A NAT-friendly, real-time distributed job scheduling system.  
-Submit shell commands from a central dashboard and execute them remotely on multiple worker agents — even behind NAT.
+Submit shell commands from a central dashboard and execute them remotely on multiple worker agents — even behind NAT. This scheduler persists tasks in a JSON-formatted flat file.
 
 ---
 
@@ -78,3 +78,91 @@ http://localhost:3000
 ```
 
 From here you can submit jobs and monitor their execution.
+
+---
+
+## 🧠 C Backend Task Scheduler – TCP Command Reference
+
+The backend C scheduler listens on TCP port 5050 and supports the following commands using `nc`. It persists tasks in a JSON-formatted flat file for task storage.
+
+### 🔹 ADD
+
+Add a new scheduled task.
+
+**Format:**
+```
+echo 'ADD * * * * * echo Hello every minute!' | nc localhost 5050
+```
+
+Tasks are stored with a generated `jobName` in the file, which is used for identification in logs and persistence.
+
+**Example:**
+```
+echo 'ADD * * * * * echo Hello every minute!' | nc localhost 5050
+```
+
+### 🔹 LIST
+
+List all scheduled tasks.
+```
+echo 'LIST' | nc localhost 5050
+```
+
+### 🔹 REMOVE
+
+Remove a task by its ID.
+```
+echo 'REMOVE 2' | nc localhost 5050
+```
+
+**Example:**
+```
+echo 'REMOVE 2' | nc localhost 5050
+```
+
+### 🔹 CLEAR
+
+Delete all tasks.
+```
+echo 'CLEAR' | nc localhost 5050
+```
+
+### 🔹 STATUS
+
+Show how many tasks are currently loaded.
+```
+echo 'STATUS' | nc localhost 5050
+```
+
+### 🔹 SAVE
+
+Save tasks to `tasks.db`.  
+`tasks.db` is a line-based JSON file, with each line representing one task:
+```json
+{"schedule": "* * * * *", "command": "echo Hello", "jobName": "task_1"}
+```
+
+```
+echo 'SAVE' | nc localhost 5050
+```
+
+### 🔹 LOAD
+
+Load tasks from `tasks.db`.  
+`tasks.db` is a line-based JSON file, with each line representing one task:
+```json
+{"schedule": "* * * * *", "command": "echo Hello", "jobName": "task_1"}
+```
+
+```
+echo 'LOAD' | nc localhost 5050
+```
+
+### 🔹 PING
+
+Check if the server is alive.
+```
+echo 'PING' | nc localhost 5050
+```
+
+Returns `PONG`
