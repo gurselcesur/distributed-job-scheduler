@@ -1,14 +1,8 @@
 [
   {
-    "command": "echo Hello from Tanay",
+    "command": "echo Hello gursel",
     "id": 1,
     "schedule": "* * * * *",
     "username": "tanay"
-  },
-  {
-    "command": "echo Hello from Gursel",
-    "id": 2,
-    "schedule": "* * * * *",
-    "username": "gursel"
   }
 ]

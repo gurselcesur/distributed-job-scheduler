@@ -29,7 +29,7 @@ app.post('/tasks', async (req, res) => {
       command: req.body.command,
       id: tasks.length + 1,
       schedule: req.body.schedule,
-      username: "test_user"
+      username: req.body.username
     };
     
     tasks.push(newTask);
