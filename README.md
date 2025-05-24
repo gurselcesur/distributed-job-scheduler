@@ -1,168 +1,95 @@
-# ⚙️ Distributed Job Scheduler
+# Distributed Job Scheduler
 
-A NAT-friendly, real-time distributed job scheduling system.  
-Submit shell commands from a central dashboard and execute them remotely on multiple worker agents — even behind NAT. This scheduler persists tasks in a JSON-formatted flat file.
+A distributed cron-based task scheduler that allows you to schedule jobs centrally on a server, which are then dispatched to and executed by individual clients. The system supports a **React + Express web frontend**, a **C++ server for scheduling**, and **C++ clients that execute jobs locally**.
 
----
+##  Requirements
 
-## 🚀 Features
+###  Backend
 
-- Centralized REST API for job submissions
-- WebSocket-based real-time communication with worker agents
-- Lightweight, cross-platform workers (Node.js)
-- Simple dashboard UI for submitting jobs and viewing logs
-- NAT-resilient communication (workers initiate connection)
-- Dockerized setup for local testing and deployment
+- C++17
+- CMake
+- `nlohmann/json.hpp` 
 
----
+###  Frontend
 
-## 📦 Tech Stack
-
-| Component        | Technology      |
-|------------------|------------------|
-| Backend API      | Node.js + Express |
-| WebSocket Server | `ws` module       |
-| Frontend UI      | Basic HTML/CSS/JS or React |
-| Worker Agent     | Node.js           |
-| Deployment       | Docker + Compose  |
+- Node.js v16+
+- npm or yarn
+- Vite
 
 ---
 
-## 🧱 Project Structure
-distributed-job-scheduler/
-├── src/
-│   ├── backend/      → Express API + WebSocket Server
-│   ├── frontend/     → HTML dashboard and JS scripts
-├── worker/           → Worker agent logic
-├── docker/           → Dockerfiles and docker-compose
-├── README.md
-└── ARCHITECTURE.md
+##  Installation & Setup
 
----
-
-## 🛠️ Getting Started
-
-### 🔧 Prerequisites
-
-- Node.js (v18+ recommended)
-- Docker (optional but recommended)
-
----
-
-## 🧪 Running Locally (Dev Mode)
-
-### 1. Install dependencies
+### 1. Build the Server & Client
 
 ```bash
+mkdir build && cd build
+cmake ..
+make
+```
+
+This will create:
+
+- `scheduler_server`
+- `scheduler_client`
+
+---
+
+### 2. Start the Server
+
+```bash
+cd ../src/backend
+./scheduler_server
+```
+
+The server runs on port `5050` and reads/writes to `tasks.json`.
+
+---
+
+### 4. Start the Client
+
+```bash
+./scheduler_client
+```
+
+The client:
+- Registers itself with the server using a username
+- Opens port `6060` to receive tasks
+- Executes received tasks using `sh -c`
+
+---
+
+### 5. Start the Express.js API
+
+```bash
+cd src/backend
 npm install
+node server.js
 ```
 
-### 2. Start the backend server
-
-```bash
-node src/backend/server.js
-```
-
-### 3. Start a worker agent (in another terminal)
-
-```bash
-node worker/agent.js
-```
-
-### 4. Open the frontend dashboard
-
-Open your browser and go to:
-
-```
-http://localhost:3000
-```
-
-From here you can submit jobs and monitor their execution.
+ The API listens on port `5050`.
 
 ---
 
-## 🧠 C Backend Task Scheduler – TCP Command Reference
+### 6. Start the React Frontend
 
-The backend C scheduler listens on TCP port 5050 and supports the following commands using `nc`. It persists tasks in a JSON-formatted flat file for task storage.
-
-### 🔹 ADD
-
-Add a new scheduled task.
-
-**Format:**
-```
-echo 'ADD * * * * * echo Hello every minute!' | nc localhost 5050
+```bash
+cd ../frontend
+npm install
+npm run dev
 ```
 
-Tasks are stored with a generated `jobName` in the file, which is used for identification in logs and persistence.
+Visit: [http://localhost:5173](http://localhost:5173)
 
-**Example:**
-```
-echo 'ADD * * * * * echo Hello every minute!' | nc localhost 5050
-```
+Use the UI to create new cron jobs for specific usernames.
 
-### 🔹 LIST
+---
 
-List all scheduled tasks.
-```
-echo 'LIST' | nc localhost 5050
-```
+## Example Workflow
 
-### 🔹 REMOVE
-
-Remove a task by its ID.
-```
-echo 'REMOVE 2' | nc localhost 5050
-```
-
-**Example:**
-```
-echo 'REMOVE 2' | nc localhost 5050
-```
-
-### 🔹 CLEAR
-
-Delete all tasks.
-```
-echo 'CLEAR' | nc localhost 5050
-```
-
-### 🔹 STATUS
-
-Show how many tasks are currently loaded.
-```
-echo 'STATUS' | nc localhost 5050
-```
-
-### 🔹 SAVE
-
-Save tasks to `tasks.db`.  
-`tasks.db` is a line-based JSON file, with each line representing one task:
-```json
-{"schedule": "* * * * *", "command": "echo Hello", "jobName": "task_1"}
-```
-
-```
-echo 'SAVE' | nc localhost 5050
-```
-
-### 🔹 LOAD
-
-Load tasks from `tasks.db`.  
-`tasks.db` is a line-based JSON file, with each line representing one task:
-```json
-{"schedule": "* * * * *", "command": "echo Hello", "jobName": "task_1"}
-```
-
-```
-echo 'LOAD' | nc localhost 5050
-```
-
-### 🔹 PING
-
-Check if the server is alive.
-```
-echo 'PING' | nc localhost 5050
-```
-
-Returns `PONG`
+1. Start the `scheduler_server`, `scheduler_client` and `server.js`.
+2. Open [http://localhost:5173](http://localhost:5173) and add a job for a username (e.g., `tanay`).
+3. The job is stored in `tasks.json`.
+4. When the schedule time arrives, the server sends it to the client with the corresponding username.
+5. The client receives the task and executes it.
+6. The client supports the commands ADD username * * * * * echo Hello World format along with the LIST command.

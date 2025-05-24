@@ -131,7 +131,7 @@ export default function NewJob() {
                   type="text"
                   value={command}
                   onChange={(e) => setCommand(e.target.value)}
-                  placeholder="e.g. echo 'Hello World'"
+                  placeholder="e.g. echo Hello World"
                   className="w-full p-3 bg-gray-800 border border-gray-700 rounded-lg font-mono"
                   required
                 />
