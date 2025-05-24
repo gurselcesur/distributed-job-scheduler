@@ -30,21 +30,23 @@ void startListener() {
     while (true) {
         int client_fd = accept(server_fd, nullptr, nullptr);
         if (client_fd >= 0) {
-            char buffer[BUFFER_SIZE] = {0};
-            read(client_fd, buffer, BUFFER_SIZE);
-            std::string command(buffer);
-            std::cout << "Received task: " << command << std::endl;
+            std::thread([client_fd]() {
+                char buffer[BUFFER_SIZE] = {0};
+                read(client_fd, buffer, BUFFER_SIZE);
+                std::string command(buffer);
+                std::cout << "Received task: " << command << std::endl;
 
-            pid_t pid = fork();
-            if (pid == 0) {
-                execl("/bin/sh", "sh", "-c", command.c_str(), NULL);
-                exit(1);
-            } else if (pid > 0) {
-                int status;
-                waitpid(pid, &status, 0);
-                std::cout << "Task finished with exit code " << WEXITSTATUS(status) << "\n";
-            }
-            close(client_fd);
+                pid_t pid = fork();
+                if (pid == 0) {
+                    execl("/bin/sh", "sh", "-c", command.c_str(), NULL);
+                    exit(1);
+                } else if (pid > 0) {
+                    int status;
+                    waitpid(pid, &status, 0);
+                    std::cout << "Task finished with exit code " << WEXITSTATUS(status) << "\n";
+                }
+                close(client_fd);
+            }).detach();
         }
     }
 }
@@ -63,7 +65,13 @@ void sendCommand(const std::string& msg) {
         char buffer[BUFFER_SIZE] = {0};
         int len = read(sock, buffer, BUFFER_SIZE);
         if (len > 0) {
-            std::cout << std::string(buffer, len);
+            std::string response(buffer, len);
+            std::cout << response;
+            if (response.find("Hello again, ") != std::string::npos) {
+                // Extract username from response if needed
+                std::cout << "Session resumed with previously known IP.\n";
+                return;
+            }
         }
 
         close(sock);
@@ -91,10 +99,16 @@ int main() {
         if (input == "exit") break;
 
         if (!input.empty()) {
-            sendCommand(input + "\n");
+            if (input == "LIST") {
+                std::ostringstream msg;
+                msg << "LIST " << username << "\n";
+                sendCommand(msg.str());
+            } else {
+                sendCommand(input + "\n");
+            }
         }
     }
 
-    listener.detach(); // or listener.join() before exiting
+    listener.detach(); // Keep background listener running
     return 0;
 }

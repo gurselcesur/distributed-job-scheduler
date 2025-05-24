@@ -6,9 +6,9 @@
     "username": "tanay"
   },
   {
-    "command": "echo from Gursel",
+    "command": "echo Hello from Gursel",
     "id": 2,
     "schedule": "* * * * *",
-    "username": "tanay"
+    "username": "gursel"
   }
 ]

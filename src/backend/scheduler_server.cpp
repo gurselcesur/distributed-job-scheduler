@@ -1,3 +1,7 @@
+// ===========================
+// scheduler_server.cpp
+// ===========================
+
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -91,6 +95,11 @@ void schedulerLoop() {
         std::lock_guard<std::mutex> lock(task_mutex);
         for (const auto& task : tasks) {
             if (matchSchedule(task.schedule, tm)) {
+                if (user_ips.find(task.username) == user_ips.end() || user_ports.find(task.username) == user_ports.end()) {
+                    logMessage("User " + task.username + " not connected. Skipping task " + std::to_string(task.id));
+                    continue;
+                }
+
                 std::string ip = user_ips[task.username];
                 int port = user_ports[task.username];
 
@@ -104,6 +113,8 @@ void schedulerLoop() {
                     send(sock, task.command.c_str(), task.command.length(), 0);
                     close(sock);
                     logMessage("Dispatched task to " + task.username + ": " + task.command);
+                } else {
+                    logMessage("Failed to connect to " + task.username);
                 }
             }
         }
@@ -137,11 +148,16 @@ void handleClient(int sock, std::string ip) {
             saveTasksToFile();
             logMessage("User " + user + " added task: [" + t.schedule + "] " + t.command);
         } else if (type == "LIST") {
+            std::string list_user;
+            cmd >> list_user;
             std::ostringstream out;
             for (const auto& t : tasks) {
-                out << "Task " << t.id << ": [" << t.schedule << "] " << t.command << "\n";
+                if (t.username == list_user) {
+                    out << "Task " << t.id << ": [" << t.schedule << "] " << t.command << "\n";
+                }
             }
-            send(sock, out.str().c_str(), out.str().length(), 0);
+            std::string result = out.str();
+            send(sock, result.c_str(), result.length(), 0);
         }
     }
     close(sock);
