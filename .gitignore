@@ -180,3 +180,4 @@ temp/
 scheduler_server
 *.dSYM/
 *.dSYM
+database.sqlite
