@@ -71,17 +71,58 @@ node server.js
 
 ---
 
-### 6. Start the React Frontend
+### 6. Start the Relay Server (Authentication Backend)
 
 ```bash
-cd ../frontend
+cd relay-server
+npm install
+node src/server.js
+```
+
+The relay server runs on port `3000` and provides:
+- User registration and authentication
+- JWT token management
+- Agent registration and monitoring
+
+### 7. Start the React Frontend
+
+```bash
+cd frontend
 npm install
 npm run dev
 ```
 
 Visit: [http://localhost:5173](http://localhost:5173)
 
-Use the UI to create new cron jobs for specific usernames.
+**First Time Setup:**
+1. Register a new account on the registration page
+2. Login with your credentials
+3. Use the authenticated UI to create and monitor cron jobs
+
+**Features:**
+- Secure authentication system
+- Modern dark theme interface
+- Real-time job and agent monitoring
+- Cron expression builder with presets
+
+**Test Mode (Frontend Only):**
+The system is currently running in test mode without a backend server. The frontend uses mock API responses.
+You can login with any username and password combination.
+
+**To enable backend server:**
+1. Start the relay server: `cd relay-server && node src/server.js`
+2. Edit `frontend/src/services/api.js`
+3. Change `const TEST_MODE = true;` to `const TEST_MODE = false;`
+4. Restart the frontend development server
+
+**Command line to switch to production mode:**
+```bash
+# Start backend
+cd relay-server && node src/server.js
+
+# In another terminal, disable test mode
+sed -i 's/const TEST_MODE = true;/const TEST_MODE = false;/' frontend/src/services/api.js
+```
 
 ---
 

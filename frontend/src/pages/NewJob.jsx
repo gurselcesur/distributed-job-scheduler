@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Clock, Terminal, User, CheckCircle, AlertCircle, Info } from 'lucide-react';
+import { Clock, Terminal, User, CheckCircle, AlertCircle, Info, Plus, Sparkles, Code, Calendar } from 'lucide-react';
+import Header from '../components/Header';
 
 export default function NewJob() {
   const [schedule, setSchedule] = useState('');
@@ -10,12 +11,12 @@ export default function NewJob() {
   const [loading, setLoading] = useState(false);
 
   const cronPresets = [
-    { label: 'Every minute', value: '* * * * *' },
-    { label: 'Every 5 minutes', value: '*/5 * * * *' },
-    { label: 'Every hour', value: '0 * * * *' },
-    { label: 'Every day at midnight', value: '0 0 * * *' },
-    { label: 'Every Monday at 9 AM', value: '0 9 * * 1' },
-    { label: 'Every month', value: '0 0 1 * *' }
+    { label: 'Every minute', value: '* * * * *', icon: '⏱️' },
+    { label: 'Every 5 minutes', value: '*/5 * * * *', icon: '🕐' },
+    { label: 'Every hour', value: '0 * * * *', icon: '⏰' },
+    { label: 'Daily (midnight)', value: '0 0 * * *', icon: '🌙' },
+    { label: 'Monday 09:00', value: '0 9 * * 1', icon: '📅' },
+    { label: 'Monthly', value: '0 0 1 * *', icon: '📆' }
   ];
 
   const validateCronExpression = (expression) => expression.trim().split(/\s+/).length === 5;
@@ -27,7 +28,7 @@ export default function NewJob() {
     setLoading(true);
 
     if (!validateCronExpression(schedule)) {
-      setError('Invalid cron expression. It must include 5 parts: minute hour day month weekday.');
+              setError('Invalid cron expression. Must contain 5 parts: minute hour day month day-of-week.');
       setLoading(false);
       return;
     }
@@ -55,7 +56,7 @@ export default function NewJob() {
         setError(`Failed to add job: ${errorText}`);
       }
     } catch (err) {
-      setError('Network error: Could not connect to server.');
+              setError('Network error: Could not connect to server.');
       console.error(err);
     } finally {
       setLoading(false);
@@ -65,141 +66,268 @@ export default function NewJob() {
   const handlePresetSelect = (value) => setSchedule(value);
 
   return (
-    <div className="min-h-screen bg-gray-900 text-gray-100 p-8">
-      <div className="max-w-4xl mx-auto">
-        <div className="flex items-center gap-3 mb-8">
-          <div className="p-2 bg-blue-600 rounded-lg">
-            <Clock className="w-6 h-6 text-white" />
-          </div>
-          <h2 className="text-3xl font-bold">Add New Cron Job</h2>
-        </div>
+    <div className="min-h-screen bg-gradient-dark relative overflow-hidden">
+      {/* Background decorations */}
+      <div className="absolute inset-0">
+        <div className="absolute top-20 left-10 w-96 h-96 bg-primary/10 rounded-full blur-3xl animate-float"></div>
+        <div className="absolute bottom-20 right-10 w-80 h-80 bg-accent-purple/10 rounded-full blur-3xl animate-float" style={{animationDelay: '2s'}}></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-72 h-72 bg-secondary/10 rounded-full blur-3xl animate-float" style={{animationDelay: '4s'}}></div>
+      </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2">
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Username */}
-              <div>
-                <label className="flex items-center gap-2 text-sm font-medium mb-2">
-                  <User className="w-4 h-4" />
-                  Username
-                </label>
-                <input
-                  type="text"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  placeholder="e.g. tanay"
-                  className="w-full p-3 bg-gray-800 border border-gray-700 rounded-lg"
-                  required
-                />
-              </div>
-
-              {/* Cron schedule */}
-              <div>
-                <label className="flex items-center gap-2 text-sm font-medium mb-2">
-                  <Clock className="w-4 h-4" />
-                  Cron Schedule
-                </label>
-                <input
-                  type="text"
-                  value={schedule}
-                  onChange={(e) => setSchedule(e.target.value)}
-                  placeholder="* * * * * (minute hour day month weekday)"
-                  className="w-full p-3 bg-gray-800 border border-gray-700 rounded-lg font-mono"
-                  required
-                />
-                <div className="flex flex-wrap gap-2 mt-2">
-                  {cronPresets.map((preset, idx) => (
-                    <button
-                      key={idx}
-                      type="button"
-                      onClick={() => handlePresetSelect(preset.value)}
-                      className="text-xs px-3 py-1 bg-gray-700 hover:bg-gray-600 rounded-full text-gray-300"
-                    >
-                      {preset.label}
-                    </button>
-                  ))}
+      <Header />
+      
+      <div className="relative z-10 p-8">
+        <div className="max-w-7xl mx-auto">
+          {/* Header Section */}
+          <div className="text-center mb-12 animate-fade-in">
+            <div className="flex items-center justify-center gap-3 mb-6">
+              <div className="relative">
+                <div className="w-16 h-16 bg-gradient-to-br from-primary to-accent-purple rounded-2xl flex items-center justify-center shadow-glow">
+                  <Plus className="w-8 h-8 text-white" />
                 </div>
+                <Sparkles className="absolute -top-2 -right-2 w-6 h-6 text-accent-orange animate-bounce-slow" />
               </div>
-
-              {/* Command */}
-              <div>
-                <label className="flex items-center gap-2 text-sm font-medium mb-2">
-                  <Terminal className="w-4 h-4" />
-                  Command
-                </label>
-                <input
-                  type="text"
-                  value={command}
-                  onChange={(e) => setCommand(e.target.value)}
-                  placeholder="e.g. echo Hello World"
-                  className="w-full p-3 bg-gray-800 border border-gray-700 rounded-lg font-mono"
-                  required
-                />
-              </div>
-
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full bg-blue-600 hover:bg-blue-700 p-3 rounded-lg text-white font-medium flex items-center justify-center gap-2"
-              >
-                {loading ? (
-                  <>
-                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                    Adding Job...
-                  </>
-                ) : (
-                  'Add Job'
-                )}
-              </button>
-
-              {/* Status */}
-              {success && (
-                <div className="flex items-center gap-2 p-4 bg-green-900/20 border border-green-700 rounded-lg text-green-400">
-                  <CheckCircle className="w-5 h-5" />
-                  Job added successfully!
-                </div>
-              )}
-
-              {error && (
-                <div className="flex items-center gap-2 p-4 bg-red-900/20 border border-red-700 rounded-lg text-red-400">
-                  <AlertCircle className="w-5 h-5" />
-                  {error}
-                </div>
-              )}
-            </form>
+            </div>
+            <h1 className="text-5xl font-bold text-white mb-4">
+              New <span className="bg-gradient-primary bg-clip-text text-transparent">Cron Job</span>
+            </h1>
+            <p className="text-xl text-text-secondary max-w-2xl mx-auto">
+              Create scheduled jobs and distribute them to your agents
+            </p>
           </div>
 
-          {/* Help panel */}
-          <div className="lg:col-span-1">
-            <div className="bg-gray-800 rounded-lg p-6 border border-gray-700 space-y-4">
-              <div className="flex items-center gap-2">
-                <Info className="w-5 h-5 text-blue-400" />
-                <h3 className="text-lg font-semibold">Cron Format Help</h3>
-              </div>
-              <div className="text-sm text-gray-300 space-y-2">
-                <p><strong>Format:</strong></p>
-                <code className="block bg-gray-900 p-2 rounded text-green-400 font-mono">* * * * *</code>
-                <p className="text-xs">minute hour day month weekday</p>
-                <p><strong>Examples:</strong></p>
-                <ul className="space-y-1 text-xs">
-                  <li><code className="text-blue-400">0 0 * * *</code> — Daily at midnight</li>
-                  <li><code className="text-blue-400">*/15 * * * *</code> — Every 15 minutes</li>
-                  <li><code className="text-blue-400">0 9 * * 1-5</code> — Weekdays at 9 AM</li>
-                </ul>
+          <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
+            {/* Main Form */}
+            <div className="xl:col-span-2 animate-slide-up" style={{animationDelay: '0.1s'}}>
+              <div className="bg-bg-glass backdrop-blur-xl rounded-3xl border border-border-glass p-8 shadow-glass">
+                <form onSubmit={handleSubmit} className="space-y-8">
+                  {/* Username Field */}
+                  <div className="group">
+                    <label className="flex items-center gap-3 text-lg font-semibold mb-4 text-white">
+                      <div className="w-8 h-8 bg-gradient-secondary rounded-lg flex items-center justify-center">
+                        <User className="w-4 h-4 text-white" />
+                      </div>
+                      Username
+                    </label>
+                    <div className="relative">
+                      <input
+                        type="text"
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                        placeholder="e.g: john"
+                        className="w-full p-4 bg-bg-medium/50 backdrop-blur-sm border border-border-glass rounded-2xl text-white placeholder-text-muted focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-300 group-hover:border-border-light"
+                        required
+                      />
+                      <div className="absolute inset-0 bg-gradient-primary opacity-0 group-hover:opacity-5 rounded-2xl transition-opacity duration-300 pointer-events-none"></div>
+                    </div>
+                  </div>
+
+                  {/* Cron Schedule Field */}
+                  <div className="group">
+                    <label className="flex items-center gap-3 text-lg font-semibold mb-4 text-white">
+                      <div className="w-8 h-8 bg-gradient-primary rounded-lg flex items-center justify-center">
+                        <Clock className="w-4 h-4 text-white" />
+                      </div>
+                      Cron Schedule
+                    </label>
+                    <div className="relative">
+                      <input
+                        type="text"
+                        value={schedule}
+                        onChange={(e) => setSchedule(e.target.value)}
+                        placeholder="* * * * * (minute hour day month day-of-week)"
+                        className="w-full p-4 bg-bg-medium/50 backdrop-blur-sm border border-border-glass rounded-2xl font-mono text-white placeholder-text-muted focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-300 group-hover:border-border-light"
+                        required
+                      />
+                      <div className="absolute inset-0 bg-gradient-primary opacity-0 group-hover:opacity-5 rounded-2xl transition-opacity duration-300 pointer-events-none"></div>
+                    </div>
+                    
+                    {/* Preset Buttons */}
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mt-4">
+                      {cronPresets.map((preset, idx) => (
+                        <button
+                          key={idx}
+                          type="button"
+                          onClick={() => handlePresetSelect(preset.value)}
+                          className="group flex items-center gap-2 p-3 bg-bg-medium/30 hover:bg-bg-light/30 border border-border-glass hover:border-primary/50 rounded-xl transition-all duration-300 hover:scale-105"
+                        >
+                          <span className="text-lg">{preset.icon}</span>
+                          <div className="text-left">
+                            <p className="text-sm font-medium text-white">{preset.label}</p>
+                            <p className="text-xs text-text-muted font-mono">{preset.value}</p>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Command Field */}
+                  <div className="group">
+                    <label className="flex items-center gap-3 text-lg font-semibold mb-4 text-white">
+                      <div className="w-8 h-8 bg-gradient-to-br from-accent-cyan to-accent-emerald rounded-lg flex items-center justify-center">
+                        <Terminal className="w-4 h-4 text-white" />
+                      </div>
+                      Command
+                    </label>
+                    <div className="relative">
+                      <input
+                        type="text"
+                        value={command}
+                        onChange={(e) => setCommand(e.target.value)}
+                        placeholder="e.g: echo Hello World"
+                        className="w-full p-4 bg-bg-medium/50 backdrop-blur-sm border border-border-glass rounded-2xl font-mono text-white placeholder-text-muted focus:border-accent-cyan focus:ring-2 focus:ring-accent-cyan/20 transition-all duration-300 group-hover:border-border-light"
+                        required
+                      />
+                      <div className="absolute inset-0 bg-gradient-secondary opacity-0 group-hover:opacity-5 rounded-2xl transition-opacity duration-300 pointer-events-none"></div>
+                    </div>
+                  </div>
+
+                  {/* Submit Button */}
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="group relative w-full p-4 bg-gradient-primary hover:shadow-glow rounded-2xl text-white font-semibold text-lg transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:hover:scale-100 overflow-hidden"
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-r from-primary to-secondary opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    <div className="relative flex items-center justify-center gap-3">
+                      {loading ? (
+                        <>
+                          <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                          Adding Job...
+                        </>
+                      ) : (
+                        <>
+                          <Plus className="w-6 h-6 group-hover:rotate-90 transition-transform duration-300" />
+                          Add Job
+                        </>
+                      )}
+                    </div>
+                  </button>
+
+                  {/* Status Messages */}
+                  {success && (
+                    <div className="flex items-center gap-4 p-4 bg-accent-emerald/10 backdrop-blur-xl border border-accent-emerald/30 rounded-2xl animate-slide-up">
+                      <div className="w-12 h-12 bg-accent-emerald/20 rounded-xl flex items-center justify-center">
+                        <CheckCircle className="w-6 h-6 text-accent-emerald" />
+                      </div>
+                      <div>
+                        <h3 className="text-accent-emerald font-semibold">Success!</h3>
+                        <p className="text-accent-emerald/80">Job added successfully.</p>
+                      </div>
+                    </div>
+                  )}
+
+                  {error && (
+                    <div className="flex items-center gap-4 p-4 bg-red-500/10 backdrop-blur-xl border border-red-500/30 rounded-2xl animate-slide-up">
+                      <div className="w-12 h-12 bg-red-500/20 rounded-xl flex items-center justify-center">
+                        <AlertCircle className="w-6 h-6 text-red-400" />
+                      </div>
+                      <div>
+                        <h3 className="text-red-400 font-semibold">Error!</h3>
+                        <p className="text-red-300">{error}</p>
+                      </div>
+                    </div>
+                  )}
+                </form>
               </div>
             </div>
 
-            {/* Preview */}
-            {schedule && (
-              <div className="mt-6 bg-gray-800 p-6 border border-gray-700 rounded-lg">
-                <h3 className="text-lg font-semibold mb-4">Preview</h3>
-                <div className="text-sm space-y-2">
-                  <div><span className="text-gray-400">User:</span> <span className="text-white">{username}</span></div>
-                  <div><span className="text-gray-400">Schedule:</span> <span className="text-green-400 font-mono">{schedule}</span></div>
-                  <div><span className="text-gray-400">Command:</span> <span className="text-blue-400 font-mono">{command}</span></div>
+            {/* Help Panel */}
+            <div className="xl:col-span-1 space-y-6 animate-slide-up" style={{animationDelay: '0.2s'}}>
+              {/* Cron Help */}
+              <div className="bg-bg-glass backdrop-blur-xl rounded-3xl border border-border-glass p-6 shadow-glass">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-10 h-10 bg-gradient-to-br from-accent-cyan to-primary rounded-xl flex items-center justify-center">
+                    <Info className="w-5 h-5 text-white" />
+                  </div>
+                  <h3 className="text-xl font-bold text-white">Cron Format Help</h3>
+                </div>
+                
+                <div className="space-y-4">
+                  <div>
+                    <p className="text-text-secondary mb-2 font-medium">Format:</p>
+                    <div className="bg-bg-medium rounded-xl p-3 border border-border-glass">
+                      <code className="text-accent-emerald font-mono text-lg">* * * * *</code>
+                    </div>
+                    <p className="text-xs text-text-muted mt-2">minute hour day month day-of-week</p>
+                  </div>
+                  
+                  <div>
+                    <p className="text-text-secondary mb-3 font-medium">Examples:</p>
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-3 p-2 bg-bg-medium/30 rounded-lg">
+                        <code className="text-accent-cyan font-mono text-sm">0 0 * * *</code>
+                        <span className="text-text-muted text-sm">— Daily midnight</span>
+                      </div>
+                      <div className="flex items-center gap-3 p-2 bg-bg-medium/30 rounded-lg">
+                        <code className="text-accent-cyan font-mono text-sm">*/15 * * * *</code>
+                        <span className="text-text-muted text-sm">— Every 15 minutes</span>
+                      </div>
+                      <div className="flex items-center gap-3 p-2 bg-bg-medium/30 rounded-lg">
+                        <code className="text-accent-cyan font-mono text-sm">0 9 * * 1-5</code>
+                        <span className="text-text-muted text-sm">— Weekdays 09:00</span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
-            )}
+
+              {/* Preview */}
+              {schedule && (
+                <div className="bg-bg-glass backdrop-blur-xl rounded-3xl border border-border-glass p-6 shadow-glass animate-scale-in">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-10 h-10 bg-gradient-secondary rounded-xl flex items-center justify-center">
+                      <Calendar className="w-5 h-5 text-white" />
+                    </div>
+                    <h3 className="text-xl font-bold text-white">Preview</h3>
+                  </div>
+                  
+                  <div className="space-y-3">
+                    <div className="p-3 bg-bg-medium/30 rounded-xl border border-border-glass">
+                      <p className="text-text-muted text-sm mb-1">Schedule:</p>
+                      <code className="text-accent-cyan font-mono text-lg">{schedule}</code>
+                    </div>
+                    {command && (
+                      <div className="p-3 bg-bg-medium/30 rounded-xl border border-border-glass">
+                        <p className="text-text-muted text-sm mb-1">Command:</p>
+                        <code className="text-white font-mono">{command}</code>
+                      </div>
+                    )}
+                    {username && (
+                      <div className="p-3 bg-bg-medium/30 rounded-xl border border-border-glass">
+                        <p className="text-text-muted text-sm mb-1">User:</p>
+                        <span className="text-white font-medium">{username}</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Tips */}
+              <div className="bg-bg-glass backdrop-blur-xl rounded-3xl border border-border-glass p-6 shadow-glass">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 bg-gradient-to-br from-accent-orange to-accent-rose rounded-xl flex items-center justify-center">
+                    <Sparkles className="w-5 h-5 text-white" />
+                  </div>
+                  <h3 className="text-xl font-bold text-white">Tips</h3>
+                </div>
+                
+                <div className="space-y-3 text-sm">
+                  <div className="flex items-start gap-3">
+                    <div className="w-2 h-2 bg-accent-emerald rounded-full mt-2"></div>
+                    <p className="text-text-secondary">You can quickly get started using the preset templates above.</p>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <div className="w-2 h-2 bg-accent-cyan rounded-full mt-2"></div>
+                    <p className="text-text-secondary">Make sure your commands are secure.</p>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <div className="w-2 h-2 bg-accent-purple rounded-full mt-2"></div>
+                    <p className="text-text-secondary">You can track your jobs from the Monitor page.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

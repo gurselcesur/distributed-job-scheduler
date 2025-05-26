@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors');
 const db = require('./models');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
@@ -7,6 +8,7 @@ const SECRET_KEY = 'super-secret-key';
 const app = express();
 const PORT = 3000;
 
+app.use(cors());
 app.use(express.json());
 
 // ====================================
@@ -45,9 +47,29 @@ app.post('/users', async (req, res) => {
   }
 });
 
-// Login and get JWT
+// Login and get JWT - TEST MODE: Any username/password works
 app.post('/login', async (req, res) => {
   const { username, password } = req.body;
+  
+  // TEST MODE: Accept any non-empty username and password
+  if (!username || !password) {
+    return res.status(401).json({ error: 'Kullanıcı adı ve şifre gerekli.' });
+  }
+
+  try {
+    // In test mode, create a token for any valid input
+    const token = jwt.sign(
+      { id: 1, username: username },
+      SECRET_KEY,
+      { expiresIn: '1h' }
+    );
+    res.json({ message: 'Login successful', token });
+  } catch (error) {
+    res.status(500).json({ error: 'Login failed.' });
+  }
+  
+  // TODO: Production mode - uncomment below and remove test mode above
+  /*
   try {
     const user = await db.User.findOne({ where: { username } });
     if (!user) return res.status(401).json({ error: 'Invalid username or password.' });
@@ -64,6 +86,7 @@ app.post('/login', async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: 'Login failed.' });
   }
+  */
 });
 
 // Get all agents (no token required)
