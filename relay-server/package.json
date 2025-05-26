@@ -1,0 +1,14 @@
+{
+    "name": "relay-server",
+    "version": "1.0.0",
+    "main": "src/server.js",
+    "scripts": {
+        "start": "node src/server.js"
+    },
+    "dependencies": {
+        "express": "^4.18.2",
+        "sequelize": "^6.37.7",
+        "sequelize-cli": "^6.6.3",
+        "sqlite3": "^5.1.6"
+    }
+}
