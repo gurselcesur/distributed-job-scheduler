@@ -50,7 +50,7 @@ app.post('/users', async (req, res) => {
 // Login and get JWT - TEST MODE: Any username/password works
 app.post('/login', async (req, res) => {
   const { username, password } = req.body;
-
+  /*
   // TEST MODE: Accept any non-empty username and password
   if (!username || !password) {
     return res.status(401).json({ error: 'Username and password required.' });
@@ -67,9 +67,11 @@ app.post('/login', async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: 'Login failed.' });
   }
+  */
+
 
   // TODO: Production mode - uncomment below and remove test mode above
-  /*
+  
   try {
     const user = await db.User.findOne({ where: { username } });
     if (!user) return res.status(401).json({ error: 'Invalid username or password.' });
@@ -86,7 +88,7 @@ app.post('/login', async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: 'Login failed.' });
   }
-  */
+  
 });
 
 // Update job status (used by agent)
@@ -236,11 +238,11 @@ async function seedDemoData() {
 // ====================================
 // Start Server and Sync DB
 // ====================================
-db.sequelize.sync({ force: true }).then(async () => {
+db.sequelize.sync({ force: false }).then(async () => {
   // !!!!!!!!!!
-  console.log("⚠️ SQLite DB dropped and recreated."); // development bittikten sonra burayı kaldır(force:true)'da kaldır!
-  //console.log("✅ SQLite database connected.");
-  await seedDemoData();
+  //console.log("⚠️ SQLite DB dropped and recreated."); // development bittikten sonra burayı kaldır(force:true)'da kaldır!
+  console.log("✅ SQLite database connected.");
+  //await seedDemoData();
   app.listen(PORT, () => {
     console.log(`🚀 Server is running on http://localhost:${PORT}`);
   });

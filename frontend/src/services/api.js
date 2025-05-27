@@ -1,7 +1,7 @@
 const API_BASE_URL = 'http://localhost:3000';
 
 // TEST MODE: Mock API responses when server is not available
-const TEST_MODE = true;
+const TEST_MODE = false;
 
 class ApiService {
   constructor() {
@@ -162,6 +162,26 @@ class ApiService {
   isAuthenticated() {
     return !!this.token;
   }
+
+  // Job methods
+  async getJobs() {
+    return this.request('/jobs');
+  }
+
+  async createJob(command, schedule, username) {
+    const agents = await this.getAgents();
+    if (!agents.length) {
+      throw new Error("No agents available to assign the job.");
+    }
+
+    const agentId = agents[0].id; // You may later allow user selection of agent
+
+    return this.request('/jobs', {
+      method: 'POST',
+      body: JSON.stringify({ command, schedule, agentId, username }),
+    });
+  }
+
 }
 
 export default new ApiService(); 

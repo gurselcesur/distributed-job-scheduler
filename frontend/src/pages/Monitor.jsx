@@ -4,23 +4,21 @@ import Header from '../components/Header';
 import apiService from '../services/api';
 
 export default function Monitor() {
-  const [tasks, setTasks] = useState([]);
+  const [jobs, setJobs] = useState([]);
   const [agents, setAgents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [activeTab, setActiveTab] = useState('tasks');
+  const [activeTab, setActiveTab] = useState('jobs');
 
-  const fetchTasks = async () => {
+  const fetchJobs = async () => {
     setLoading(true);
     setError('');
     try {
-      const res = await fetch('http://localhost:5050/tasks');
-      if (!res.ok) throw new Error('Failed to load tasks');
-      const data = await res.json();
-      setTasks(data);
+      const data = await apiService.getJobs();
+      setJobs(data);
     } catch (err) {
-      setError('Error loading tasks: ' + err.message);
-      console.error('Error loading tasks:', err);
+      setError('Error loading jobs: ' + err.message);
+      console.error('Error loading jobs:', err);
     } finally {
       setLoading(false);
     }
@@ -41,8 +39,8 @@ export default function Monitor() {
   };
 
   const fetchData = () => {
-    if (activeTab === 'tasks') {
-      fetchTasks();
+    if (activeTab === 'jobs') {
+      fetchJobs();
     } else {
       fetchAgents();
     }
@@ -89,7 +87,7 @@ export default function Monitor() {
             <div className="flex items-center gap-4">
               <div className="relative">
                 <div className="w-16 h-16 bg-gradient-secondary rounded-2xl flex items-center justify-center shadow-glow">
-                  {activeTab === 'tasks' ? (
+                  {activeTab === 'jobs' ? (
                     <Activity className="w-8 h-8 text-white" />
                   ) : (
                     <Server className="w-8 h-8 text-white" />
@@ -99,10 +97,10 @@ export default function Monitor() {
               </div>
               <div>
                 <h1 className="text-4xl font-bold text-white">
-                  {activeTab === 'tasks' ? 'Job Monitoring' : 'Agent Status'}
+                  {activeTab === 'jobs' ? 'Job Monitoring' : 'Agent Status'}
                 </h1>
                 <p className="text-text-secondary">
-                  {activeTab === 'tasks' ? 'Track active jobs in real-time' : 'Monitor connected agents status'}
+                  {activeTab === 'jobs' ? 'Track active jobs in real-time' : 'Monitor connected agents status'}
                 </p>
               </div>
             </div>
@@ -120,18 +118,17 @@ export default function Monitor() {
           {/* Tab Navigation */}
           <div className="flex gap-2 mb-8 animate-slide-up" style={{animationDelay: '0.1s'}}>
             <button
-              onClick={() => setActiveTab('tasks')}
-              className={`group relative px-6 py-3 rounded-2xl transition-all duration-300 ${
-                activeTab === 'tasks'
+                onClick={() => setActiveTab('jobs')}
+              className={`group relative px-6 py-3 rounded-2xl transition-all duration-30
                   ? 'bg-gradient-primary text-white shadow-glow'
                   : 'bg-bg-glass backdrop-blur-xl border border-border-glass text-text-secondary hover:text-white hover:shadow-glass'
               }`}
-            >
+            > 
               <div className="flex items-center gap-3">
                 <Activity className="w-5 h-5" />
                 <span className="font-medium">Jobs</span>
                 <div className="px-2 py-1 bg-white/20 rounded-lg text-xs font-semibold">
-                  {tasks.length}
+                  {jobs.length}
                 </div>
               </div>
             </button>
@@ -188,9 +185,9 @@ export default function Monitor() {
           {/* Content */}
           {!loading && !error && (
             <div className="animate-slide-up" style={{animationDelay: '0.2s'}}>
-              {activeTab === 'tasks' ? (
-                // Tasks Tab
-                tasks.length === 0 ? (
+              {activeTab === 'jobs' ? (
+                // Jobs Tab
+                jobs.length === 0 ? (
                   <div className="text-center py-20">
                     <div className="bg-bg-glass backdrop-blur-xl rounded-3xl border border-border-glass p-12 max-w-md mx-auto">
                       <div className="w-20 h-20 bg-gradient-primary rounded-2xl flex items-center justify-center mx-auto mb-6">
@@ -205,9 +202,9 @@ export default function Monitor() {
                   </div>
                 ) : (
                   <div className="grid gap-6">
-                    {tasks.map((task, index) => (
+                    {jobs.map((job, index) => (
                       <div 
-                        key={task.id}
+                        key={job.id}
                         className="group bg-bg-glass backdrop-blur-xl rounded-2xl border border-border-glass p-6 hover:shadow-glass transition-all duration-300 hover:scale-[1.02] animate-scale-in"
                         style={{animationDelay: `${0.1 * index}s`}}
                       >
@@ -221,7 +218,7 @@ export default function Monitor() {
                             </div>
                             <div className="flex-1">
                               <div className="flex items-center gap-3 mb-2">
-                                <h3 className="text-xl font-bold text-white">Job #{task.id}</h3>
+                                <h3 className="text-xl font-bold text-white">Job #{job.id}</h3>
                                 <div className="px-3 py-1 bg-primary/20 rounded-lg">
                                   <span className="text-primary text-sm font-medium">Active</span>
                                 </div>
@@ -229,15 +226,15 @@ export default function Monitor() {
                               <div className="grid md:grid-cols-3 gap-4 text-sm">
                                 <div>
                                   <p className="text-text-muted mb-1">Command</p>
-                                  <p className="text-white font-mono bg-bg-medium px-3 py-1 rounded-lg">{task.command}</p>
+                                  <p className="text-white font-mono bg-bg-medium px-3 py-1 rounded-lg">{job.command}</p>
                                 </div>
                                 <div>
                                   <p className="text-text-muted mb-1">Schedule</p>
-                                  <p className="text-accent-cyan font-medium">{task.schedule}</p>
+                                  <p className="text-accent-cyan font-medium">{job.schedule}</p>
                                 </div>
                                 <div>
                                   <p className="text-text-muted mb-1">User</p>
-                                  <p className="text-white">{task.username}</p>
+                                  <p className="text-white">{job.username}</p>
                                 </div>
                               </div>
                             </div>

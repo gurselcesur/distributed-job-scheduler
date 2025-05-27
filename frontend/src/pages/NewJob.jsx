@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Clock, Terminal, User, CheckCircle, AlertCircle, Info, Plus, Sparkles, Code, Calendar } from 'lucide-react';
 import Header from '../components/Header';
+import apiService from '../services/api';
 
 export default function NewJob() {
   const [schedule, setSchedule] = useState('');
@@ -40,11 +41,7 @@ export default function NewJob() {
     }
 
     try {
-      const res = await fetch('http://localhost:5050/tasks', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ command, schedule, username })
-      });
+      const res = await apiService.createJob(command, schedule, username);
 
       if (res.ok) {
         setSuccess(true);
