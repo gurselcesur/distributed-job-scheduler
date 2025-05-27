@@ -27,33 +27,27 @@ export default function NewJob() {
     setError('');
     setSuccess(false);
     setLoading(true);
-
+  
     if (!validateCronExpression(schedule)) {
-              setError('Invalid cron expression. Must contain 5 parts: minute hour day month day-of-week.');
+      setError('Invalid cron expression. Must contain 5 parts: minute hour day month day-of-week.');
       setLoading(false);
       return;
     }
-
+  
     if (!username.trim()) {
       setError('Username is required.');
       setLoading(false);
       return;
     }
-
+  
     try {
-      const res = await apiService.createJob(command, schedule, username);
-
-      if (res.ok) {
-        setSuccess(true);
-        setSchedule('');
-        setCommand('');
-        setTimeout(() => setSuccess(false), 3000);
-      } else {
-        const errorText = await res.text();
-        setError(`Failed to add job: ${errorText}`);
-      }
+      await apiService.createJob(command, schedule); 
+      setSuccess(true);
+      setSchedule('');
+      setCommand('');
+      setTimeout(() => setSuccess(false), 3000);
     } catch (err) {
-              setError('Network error: Could not connect to server.');
+      setError(`Failed to add job: ${err.message}`);
       console.error(err);
     } finally {
       setLoading(false);
