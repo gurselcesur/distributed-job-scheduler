@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Activity, CheckCircle, XCircle, RefreshCw, Terminal, Server, Clock, Zap, AlertCircle, TrendingUp, Trash2 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import apiService from '../services/api';
 
@@ -10,6 +11,7 @@ export default function Monitor() {
   const [error, setError] = useState('');
   const [activeTab, setActiveTab] = useState('jobs');
   const [deleteLoading, setDeleteLoading] = useState(null);
+  const navigate = useNavigate();
 
   const fetchJobs = async () => {
     setLoading(true);
@@ -89,6 +91,14 @@ export default function Monitor() {
     } finally {
       setDeleteLoading(null);
     }
+  };
+
+  const handleCreateFirstJob = () => {
+    navigate('/new-job');
+  };
+
+  const handleAgentSetupGuide = () => {
+    navigate('/new-job');
   };
 
   return (
@@ -216,7 +226,10 @@ export default function Monitor() {
                       </div>
                       <h3 className="text-2xl font-bold text-white mb-3">No Jobs Yet</h3>
                       <p className="text-text-secondary mb-6">There are no running jobs on the system.</p>
-                      <button className="px-6 py-3 bg-gradient-primary rounded-xl text-white font-medium hover:shadow-glow transition-all duration-300">
+                      <button 
+                        onClick={handleCreateFirstJob}
+                        className="px-6 py-3 bg-gradient-primary rounded-xl text-white font-medium hover:shadow-glow transition-all duration-300"
+                      >
                         Create Your First Job
                       </button>
                     </div>
@@ -294,7 +307,10 @@ export default function Monitor() {
                       </div>
                       <h3 className="text-2xl font-bold text-white mb-3">No Agents Found</h3>
                       <p className="text-text-secondary mb-6">No agents are connected to the system.</p>
-                      <button className="px-6 py-3 bg-gradient-secondary rounded-xl text-white font-medium hover:shadow-glow transition-all duration-300">
+                      <button 
+                        onClick={handleAgentSetupGuide}
+                        className="px-6 py-3 bg-gradient-secondary rounded-xl text-white font-medium hover:shadow-glow transition-all duration-300"
+                      >
                         Agent Setup Guide
                       </button>
                     </div>
