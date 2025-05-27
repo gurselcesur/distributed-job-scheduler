@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Activity, CheckCircle, XCircle, RefreshCw, Terminal, Server, Clock, Zap, AlertCircle, TrendingUp } from 'lucide-react';
+import { Activity, CheckCircle, XCircle, RefreshCw, Terminal, Server, Clock, Zap, AlertCircle, TrendingUp, Trash2 } from 'lucide-react';
 import Header from '../components/Header';
 import apiService from '../services/api';
 
@@ -9,6 +9,7 @@ export default function Monitor() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [activeTab, setActiveTab] = useState('jobs');
+  const [deleteLoading, setDeleteLoading] = useState(null);
 
   const fetchJobs = async () => {
     setLoading(true);
@@ -67,6 +68,26 @@ export default function Monitor() {
       case 'completed': return CheckCircle;
       case 'failed': return XCircle;
       default: return Clock;
+    }
+  };
+
+  const handleDeleteJob = async (jobId) => {
+    if (!confirm('Bu işi silmek istediğinize emin misiniz?')) {
+      return;
+    }
+    
+    setDeleteLoading(jobId);
+    setError('');
+    
+    try {
+      await apiService.deleteJob(jobId);
+      // İş başarıyla silindikten sonra listeyi güncelle
+      setJobs(jobs.filter(job => job.id !== jobId));
+    } catch (err) {
+      setError('İş silinirken hata oluştu: ' + err.message);
+      console.error('İş silinirken hata:', err);
+    } finally {
+      setDeleteLoading(null);
     }
   };
 
@@ -245,6 +266,18 @@ export default function Monitor() {
                               <p className="text-white font-medium">2 minutes ago</p>
                             </div>
                             <div className="w-3 h-3 bg-accent-emerald rounded-full animate-pulse"></div>
+                            <button
+                              onClick={() => handleDeleteJob(job.id)}
+                              disabled={deleteLoading === job.id}
+                              className="p-2 bg-red-500/20 rounded-xl hover:bg-red-500/30 transition-colors duration-300"
+                              title="İşi Sil"
+                            >
+                              {deleteLoading === job.id ? (
+                                <RefreshCw className="w-5 h-5 text-red-400 animate-spin" />
+                              ) : (
+                                <Trash2 className="w-5 h-5 text-red-400" />
+                              )}
+                            </button>
                           </div>
                         </div>
                       </div>

@@ -199,6 +199,29 @@ app.get('/protected', authenticateToken, (req, res) => {
   res.json({ message: `Hello ${req.user.username}, you are authorized.` });
 });
 
+// Delete a job
+app.delete('/jobs/:id', authenticateToken, async (req, res) => {
+  const { id } = req.params;
+  
+  try {
+    const job = await db.Job.findOne({
+      where: { 
+        id: id,
+        userId: req.user.id // Sadece kendi işlerini silebilmeli
+      }
+    });
+
+    if (!job) {
+      return res.status(404).json({ error: 'İş bulunamadı veya bu işi silme yetkiniz yok.' });
+    }
+
+    await job.destroy();
+    res.json({ message: 'İş başarıyla silindi' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Dummy Data
 async function seedDemoData() {
   const password_hash = await bcrypt.hash("123456", 10);
@@ -235,9 +258,9 @@ async function seedDemoData() {
 // ====================================
 // Start Server and Sync DB
 // ====================================
-db.sequelize.sync({ force: false }).then(async () => {
+db.sequelize.sync({ force: true }).then(async () => {
   console.log("SQLite database connected.");
-  //await seedDemoData();
+  await seedDemoData();
   app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
   });

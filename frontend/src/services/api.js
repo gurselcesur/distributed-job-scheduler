@@ -179,6 +179,12 @@ class ApiService {
     });
   }
 
+  async deleteJob(jobId) {
+    return this.request(`/jobs/${jobId}`, {
+      method: 'DELETE',
+    });
+  }
+
 }
 
 export default new ApiService(); 
