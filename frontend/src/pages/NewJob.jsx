@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Clock, Terminal, User, CheckCircle, AlertCircle, Info, Plus, Sparkles, Code, Calendar } from 'lucide-react';
 import Header from '../components/Header';
 import apiService from '../services/api';
@@ -6,10 +6,27 @@ import apiService from '../services/api';
 export default function NewJob() {
   const [schedule, setSchedule] = useState('');
   const [command, setCommand] = useState('');
-  const [username, setUsername] = useState('');
+  const [selectedAgent, setSelectedAgent] = useState('');
+  const [agents, setAgents] = useState([]);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchAgents = async () => {
+      try {
+        const agentsList = await apiService.getAgents();
+        setAgents(agentsList);
+        if (agentsList.length > 0) {
+          setSelectedAgent(agentsList[0].id);
+        }
+      } catch (err) {
+        setError('Agent listesi yüklenirken hata oluştu');
+        console.error(err);
+      }
+    };
+    fetchAgents();
+  }, []);
 
   const cronPresets = [
     { label: 'Every minute', value: '* * * * *', icon: '⏱️' },
@@ -34,17 +51,18 @@ export default function NewJob() {
       return;
     }
   
-    if (!username.trim()) {
-      setError('Username is required.');
+    if (!selectedAgent) {
+      setError('Please select an agent');
       setLoading(false);
       return;
     }
   
     try {
-      await apiService.createJob(command, schedule); 
+      await apiService.createJob(command, schedule, selectedAgent); 
       setSuccess(true);
       setSchedule('');
       setCommand('');
+      setSelectedAgent(agents[0]?.id || '');
       setTimeout(() => setSuccess(false), 3000);
     } catch (err) {
       setError(`Failed to add job: ${err.message}`);
@@ -56,8 +74,6 @@ export default function NewJob() {
 
   const handlePresetSelect = (value) => setSchedule(value);
 
-  // TODO: delete the username field. Instead of it, create a dropdown menu to choose among the agents.
-  
   return (
     <div className="min-h-screen bg-gradient-dark relative overflow-hidden">
       {/* Background decorations */}
@@ -94,23 +110,27 @@ export default function NewJob() {
             <div className="xl:col-span-2 animate-slide-up" style={{animationDelay: '0.1s'}}>
               <div className="bg-bg-glass backdrop-blur-xl rounded-3xl border border-border-glass p-8 shadow-glass">
                 <form onSubmit={handleSubmit} className="space-y-8">
-                  {/* Username Field */}
+                  {/* Agent Selection Field */}
                   <div className="group">
                     <label className="flex items-center gap-3 text-lg font-semibold mb-4 text-white">
                       <div className="w-8 h-8 bg-gradient-secondary rounded-lg flex items-center justify-center">
                         <User className="w-4 h-4 text-white" />
                       </div>
-                      Username
+                      Select Agent
                     </label>
                     <div className="relative">
-                      <input
-                        type="text"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                        placeholder="e.g: john"
+                      <select
+                        value={selectedAgent}
+                        onChange={(e) => setSelectedAgent(e.target.value)}
                         className="w-full p-4 bg-bg-medium/50 backdrop-blur-sm border border-border-glass rounded-2xl text-white placeholder-text-muted focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-300 group-hover:border-border-light"
                         required
-                      />
+                      >
+                        {agents.map((agent) => (
+                          <option key={agent.id} value={agent.id}>
+                            {agent.hostname} ({agent.ip})
+                          </option>
+                        ))}
+                      </select>
                       <div className="absolute inset-0 bg-gradient-primary opacity-0 group-hover:opacity-5 rounded-2xl transition-opacity duration-300 pointer-events-none"></div>
                     </div>
                   </div>
@@ -286,10 +306,10 @@ export default function NewJob() {
                         <code className="text-white font-mono">{command}</code>
                       </div>
                     )}
-                    {username && (
+                    {selectedAgent && (
                       <div className="p-3 bg-bg-medium/30 rounded-xl border border-border-glass">
-                        <p className="text-text-muted text-sm mb-1">User:</p>
-                        <span className="text-white font-medium">{username}</span>
+                        <p className="text-text-muted text-sm mb-1">Agent:</p>
+                        <span className="text-white font-medium">{selectedAgent}</span>
                       </div>
                     )}
                   </div>
