@@ -1,28 +1,41 @@
-distributed-job-scheduler/
-├── src/
-│   ├── backend/
-│   │   ├── scheduler_server       # executable
-│   │   ├── scheduler_server.cpp   # cpp program
-│   │   ├── scheduler.log          # a clear log for the program
-│   │   └── tasks.json             # database for the tasks
-│   │   
-│   ├── frontend/
-│   │   ├── index.html             # Main page
-│   │   ├── submit.html            # Job submission page
-│   │   ├── view.html              # Job viewing page
-│   │   └── js/
-│   │       └── main.js            # Form submission, fetch operations
-│
-├── worker/
-│   ├── agent.js                   # Worker agent WebSocket client
-│   └── utils.js                   # Command execution & log sending
-│
-├── docker/
-│   ├── Dockerfile.server          # Backend + frontend image
-│   ├── Dockerfile.worker          # Worker image
-│   └── docker-compose.yml         # Launches everything
-│
-├── ARCHITECTURE.md                # Architecture documentation
-├── README.md                      # Project summary and usage
-├── package.json                   # Project dependencies
-└── .gitignore
+cron-scheduler/
+├── agent/                          # Kullanıcının bilgisayarında çalışacak
+│   ├── src/
+│   │   ├── services/
+│   │   │   ├── agentService.js     # registerAgent, getIPAddress
+│   │   │   └── apiService.js       # fetchJobs, updateJobStatus
+│   │   ├── core/
+│   │   │   ├── jobScheduler.js     # fetch + run loop
+│   │   │   └── jobRunner.js        # tek bir job'ı çalıştırır
+│   │   ├── utils/
+│   │   │   └── cronUtils.js        # isJobDue
+│   │   └── bootstrap.js            # ana başlatıcı
+│   └── package.json
+├── relay-server/                   # Merkezi relay sunucusu
+│   ├── src/
+│   │   ├── services/
+│   │   │   ├── tunnelManager.js    # Agent bağlantıları yönetimi
+│   │   │   ├── authService.js      # Kullanıcı kimlik doğrulama
+│   │   │   └── relayService.js     # Mesaj iletimi
+│   │   ├── models/
+│   │   │   ├── User.js
+│   │   │   └── Agent.js
+│   │   └── server.js
+│   └── package.json
+├── web-app/                        # Web arayüzü
+│   ├── src/
+│   │   ├── components/
+│   │   │   ├── Auth/
+│   │   │   │   ├── Login.jsx
+│   │   │   │   └── Register.jsx
+│   │   │   ├── Dashboard/
+│   │   │   ├── JobManager/
+│   │   │   └── AgentStatus/
+│   │   ├── services/
+│   │   │   ├── api.js
+│   │   │   └── websocket.js
+│   │   └── App.jsx
+│   └── package.json
+└── docs/
+    ├── SETUP.md
+    └── SECURITY.md

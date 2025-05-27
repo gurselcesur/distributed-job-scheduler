@@ -1,2 +1,0 @@
-{"schedule": "* * * * *", "command": "echo Hello every minute!", "jobName": "task_1"}
-{"schedule": "* * * * *", "command": "echo Hello every minute!", "jobName": "task_2"}

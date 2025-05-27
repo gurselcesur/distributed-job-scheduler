@@ -6,6 +6,7 @@ yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
 .pnpm-debug.log*
+scheduler.log
 
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
@@ -174,3 +175,9 @@ coverage/
 # Temporary files
 tmp/
 temp/
+
+# Compiled binaries
+scheduler_server
+*.dSYM/
+*.dSYM
+database.sqlite
