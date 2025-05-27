@@ -32,14 +32,29 @@ class ApiService {
 
     try {
       const response = await fetch(url, config);
-      const data = await response.json();
-
+      
+      // Sunucu çalışmıyor olabilir, HTTP hatası döndürebilir
       if (!response.ok) {
-        throw new Error(data.error || 'Request failed');
+        const contentType = response.headers.get('content-type');
+        
+        // Yanıt JSON ise, hata mesajını alalım
+        if (contentType && contentType.includes('application/json')) {
+          const data = await response.json();
+          throw new Error(data.error || `İstek başarısız oldu: ${response.status}`);
+        } else {
+          // JSON değilse (HTML gibi), genel bir hata mesajı oluşturalım
+          throw new Error(`Sunucu hatası: ${response.status}. Sunucu çalışmıyor olabilir.`);
+        }
       }
-
+      
+      // Başarılı yanıt, JSON'a çevirelim
+      const data = await response.json();
       return data;
     } catch (error) {
+      // Ağ hataları veya JSON ayrıştırma hataları
+      if (error.name === 'SyntaxError') {
+        throw new Error('Sunucudan geçersiz yanıt alındı. Sunucu çalışmıyor olabilir.');
+      }
       throw error;
     }
   }

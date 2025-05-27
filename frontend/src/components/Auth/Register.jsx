@@ -99,17 +99,6 @@ export default function Register() {
 
         {/* Register Form */}
         <div className="bg-bg-glass backdrop-blur-xl rounded-3xl border border-border-glass p-8 shadow-glass animate-slide-up" style={{animationDelay: '0.1s'}}>
-          {/* Test Mode Notice */}
-          <div className="bg-accent-orange/10 backdrop-blur-xl border border-accent-orange/30 rounded-2xl p-4 mb-6 flex items-center gap-4">
-            <div className="w-10 h-10 bg-accent-orange/20 rounded-xl flex items-center justify-center">
-              <Sparkles className="w-5 h-5 text-accent-orange" />
-            </div>
-            <div>
-              <h3 className="text-accent-orange font-semibold">Test Mode - No Backend</h3>
-              <p className="text-accent-orange/80 text-sm">You can register with any username and password (Mock API)</p>
-              <p className="text-accent-orange/60 text-xs mt-1">Running without backend server</p>
-            </div>
-          </div>
           
           <form onSubmit={handleSubmit} className="space-y-6">
             {error && (
