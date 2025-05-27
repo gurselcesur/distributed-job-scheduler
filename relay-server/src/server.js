@@ -177,6 +177,29 @@ app.get('/protected', authenticateToken, (req, res) => {
   res.json({ message: `Hello ${req.user.username}, you are authorized.` });
 });
 
+// Delete a job
+app.delete('/jobs/:id', authenticateToken, async (req, res) => {
+  const { id } = req.params;
+  
+  try {
+    const job = await db.Job.findOne({
+      where: { 
+        id: id,
+        userId: req.user.id // Sadece kendi işlerini silebilmeli
+      }
+    });
+
+    if (!job) {
+      return res.status(404).json({ error: 'İş bulunamadı veya bu işi silme yetkiniz yok.' });
+    }
+
+    await job.destroy();
+    res.json({ message: 'İş başarıyla silindi' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // ====================================
 // Start Server and Sync DB
 // ====================================
