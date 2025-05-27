@@ -56,6 +56,8 @@ export default function NewJob() {
 
   const handlePresetSelect = (value) => setSchedule(value);
 
+  // TODO: delete the username field. Instead of it, create a dropdown menu to choose among the agents.
+  
   return (
     <div className="min-h-screen bg-gradient-dark relative overflow-hidden">
       {/* Background decorations */}

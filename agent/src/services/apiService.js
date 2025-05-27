@@ -1,22 +1,24 @@
 const axios = require('axios');
+const { getToken } = require('../utils/tokenStore');
 
 const SERVER_URL = 'http://localhost:3000';
-const TOKEN = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJ0ZXN0dXNlciIsImlhdCI6MTc0ODMxMDg4OSwiZXhwIjoxNzQ4MzE0NDg5fQ.U86b1xpNKk5C8AulQ2pgfPjEdR7PEVM1ayz5aQeOVHg'; // Token’ı istersen dışa alırız
 
 async function fetchJobs() {
+  const token = getToken();
   const res = await axios.get(`${SERVER_URL}/jobs`, {
-    headers: { Authorization: TOKEN }
+    headers: { Authorization: `Bearer ${token}` },
   });
   return res.data;
 }
 
 async function updateJobStatus(jobId, data) {
+  const token = getToken();
   await axios.patch(`${SERVER_URL}/jobs/${jobId}`, data, {
-    headers: { Authorization: TOKEN }
+    headers: { Authorization: `Bearer ${token}` },
   });
 }
 
 module.exports = {
   fetchJobs,
-  updateJobStatus
+  updateJobStatus,
 };
