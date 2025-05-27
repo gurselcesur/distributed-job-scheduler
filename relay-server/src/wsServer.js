@@ -6,7 +6,7 @@ function startWebSocketServer(server) {
   const wss = new WebSocket.Server({ server });
 
   wss.on('connection', (ws) => {
-    console.log('🔌 New WebSocket connection');
+    console.log('New WebSocket connection');
 
     ws.on('message', (message) => {
       try {
@@ -36,13 +36,13 @@ function startWebSocketServer(server) {
     });
   });
 
-  console.log('🛰️ WebSocket server is ready.');
+  console.log('WebSocket server is ready.');
 }
 
 function dispatchJobToAgent(agentId, job) {
   const ws = agentConnections.get(agentId);
   if (!ws || ws.readyState !== WebSocket.OPEN) {
-    console.log(`⚠️ Agent ${agentId} is not connected`);
+    console.log(`Agent ${agentId} is not connected`);
     return false;
   }
 
