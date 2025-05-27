@@ -47,30 +47,9 @@ app.post('/users', async (req, res) => {
   }
 });
 
-// Login and get JWT - TEST MODE: Any username/password works
+// Login and get JWT
 app.post('/login', async (req, res) => {
   const { username, password } = req.body;
-  /*
-  // TEST MODE: Accept any non-empty username and password
-  if (!username || !password) {
-    return res.status(401).json({ error: 'Username and password required.' });
-  }
-
-  try {
-    // In test mode, create a token for any valid input
-    const token = jwt.sign(
-      { id: 1, username: username },
-      SECRET_KEY,
-      { expiresIn: '1h' }
-    );
-    res.json({ message: 'Login successful', token });
-  } catch (error) {
-    res.status(500).json({ error: 'Login failed.' });
-  }
-  */
-
-
-  // TODO: Production mode - uncomment below and remove test mode above
   
   try {
     const user = await db.User.findOne({ where: { username } });
@@ -88,7 +67,6 @@ app.post('/login', async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: 'Login failed.' });
   }
-  
 });
 
 // Update job status (used by agent)
@@ -199,45 +177,12 @@ app.get('/protected', authenticateToken, (req, res) => {
   res.json({ message: `Hello ${req.user.username}, you are authorized.` });
 });
 
-// Dummy Data
-async function seedDemoData() {
-  const password_hash = await bcrypt.hash("123456", 10);
-
-  const demoUser = await db.User.create({
-    username: "testuser",
-    password_hash
-  });
-
-  const demoAgent = await db.Agent.create({
-    hostname: "demo-agent",
-    ip: "127.0.0.1",
-    lastSeen: new Date()
-  });
-
-  await db.Job.create({
-    command: "echo Hello from demo job!",
-    schedule: "*/5 * * * *",
-    userId: demoUser.id,
-    agentId: demoAgent.id
-  });
-
-  const token = jwt.sign(
-    { id: demoUser.id, username: demoUser.username },
-    SECRET_KEY,
-    { expiresIn: '1h' }
-  );
-
-  console.log("🚀 Demo user, agent and job seeded.");
-  console.log("🔑 DEMO TOKEN:");
-  console.log(token);
-}
-
 // ====================================
 // Start Server and Sync DB
 // ====================================
 db.sequelize.sync({ force: false }).then(async () => {
   console.log("SQLite database connected.");
-  app.listen(PORT,() => {
-    console.log(`Server running on http://localhost:${PORT}`);
+  app.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
   });
 });

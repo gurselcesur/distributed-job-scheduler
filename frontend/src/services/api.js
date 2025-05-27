@@ -1,8 +1,5 @@
 const API_BASE_URL = 'http://localhost:3000';
 
-// TEST MODE: Mock API responses when server is not available
-const TEST_MODE = false;
-
 class ApiService {
   constructor() {
     this.token = localStorage.getItem('token');
@@ -23,11 +20,6 @@ class ApiService {
   }
 
   async request(endpoint, options = {}) {
-    // TEST MODE: Return mock responses
-    if (TEST_MODE) {
-      return this.mockRequest(endpoint, options);
-    }
-
     const url = `${API_BASE_URL}${endpoint}`;
     const config = {
       headers: {
@@ -49,70 +41,6 @@ class ApiService {
       return data;
     } catch (error) {
       throw error;
-    }
-  }
-
-  // Mock API responses for testing without backend
-  async mockRequest(endpoint, options = {}) {
-    // Simulate network delay
-    await new Promise(resolve => setTimeout(resolve, 500));
-
-    const method = options.method || 'GET';
-    const body = options.body ? JSON.parse(options.body) : {};
-
-    switch (`${method} ${endpoint}`) {
-      case 'POST /login':
-        if (!body.username || !body.password) {
-          throw new Error('Kullanıcı adı ve şifre gerekli');
-        }
-        return {
-          message: 'Login successful',
-          token: 'mock-jwt-token-' + Date.now()
-        };
-
-      case 'POST /users':
-        if (!body.username || !body.password) {
-          throw new Error('Kullanıcı adı ve şifre gerekli');
-        }
-        return {
-          message: 'User created successfully',
-          userId: Math.floor(Math.random() * 1000)
-        };
-
-      case 'GET /agents':
-        return [
-          {
-            id: 1,
-            hostname: 'test-agent-1',
-            ip: '192.168.1.100',
-            lastSeen: new Date().toISOString()
-          },
-          {
-            id: 2,
-            hostname: 'test-agent-2',
-            ip: '192.168.1.101',
-            lastSeen: new Date().toISOString()
-          }
-        ];
-
-      case 'POST /agents':
-        return {
-          id: Math.floor(Math.random() * 1000),
-          hostname: body.hostname,
-          ip: body.ip,
-          lastSeen: new Date().toISOString()
-        };
-
-      case 'GET /protected':
-        if (!this.token) {
-          throw new Error('Access token is missing');
-        }
-        return {
-          message: 'Hello test user, you are authorized.'
-        };
-
-      default:
-        throw new Error('Mock endpoint not implemented: ' + endpoint);
     }
   }
 
@@ -179,6 +107,11 @@ class ApiService {
     });
   }
 
+  async deleteJob(jobId) {
+    return this.request(`/jobs/${jobId}`, {
+      method: 'DELETE',
+    });
+  }
 }
 
 export default new ApiService(); 
