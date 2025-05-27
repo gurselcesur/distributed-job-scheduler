@@ -15,7 +15,7 @@ function isJobDue(schedule) {
 
     return (now - prev) <= 30000;
   } catch (e) {
-    console.error(`⛔ Invalid cron schedule: ${schedule}`);
+    console.error(`Invalid cron schedule: ${schedule}`);
     return false;
   }
 }

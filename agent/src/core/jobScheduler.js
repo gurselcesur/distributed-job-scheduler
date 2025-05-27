@@ -14,48 +14,43 @@ const CHECK_INTERVAL_MS = 5000;
  * @param {string} agentId - The unique identifier of the agent running the scheduler
  */
 function startScheduler(agentId) {
-  /**
-   * Fetches and executes due jobs for this agent
-   * This function runs recursively with a timeout
-   */
   async function fetchAndRunJobs() {
-    // Exit if no agent ID is provided
     if (!agentId) return;
 
     try {
-      // Fetch all jobs from the API
       const jobs = await fetchJobs();
+      console.log(`Fetched ${jobs.length} jobs from API`);
+      console.log(`Running as agent #${agentId}`);
 
-      // Filter jobs that:
-      // 1. Are assigned to this agent
-      // 2. Are due to run based on their schedule
-      // 3. Haven't run recently (to prevent duplicate executions)
-      const dueJobs = jobs.filter(job =>
-        job.agentId === agentId &&
-        isJobDue(job.schedule) &&
-        (!job.lastRunAt || (Date.now() - new Date(job.lastRunAt).getTime()) > CHECK_INTERVAL_MS + 500)
-      );
+      const dueJobs = jobs.filter(job => {
+        const due = isJobDue(job.schedule);
+        const recentRun =
+          job.lastRunAt &&
+          (Date.now() - new Date(job.lastRunAt).getTime()) <= CHECK_INTERVAL_MS + 500;
 
-      // Reset failure count on successful fetch
+        console.log(
+          `Job #${job.id} [agentId=${job.agentId}] - due=${due}, recentRun=${recentRun}`
+        );
+
+        return job.agentId === agentId && due && !recentRun;
+      });
+
       failureCount = 0;
 
-      // Execute each due job
       for (const job of dueJobs) {
+        console.log(`▶️ Executing job #${job.id}: ${job.command}`);
         runJob(job);
       }
 
     } catch (err) {
-      // Increment failure count and log error
       failureCount++;
       console.error(`Failed to fetch jobs (fail #${failureCount}):`, err.response?.data || err.message);
     }
 
-    // Schedule the next check
     console.log(`Next job check in ${CHECK_INTERVAL_MS / 1000} seconds...\n`);
     setTimeout(fetchAndRunJobs, CHECK_INTERVAL_MS);
   }
 
-  // Start the initial job check
   fetchAndRunJobs();
 }
 
