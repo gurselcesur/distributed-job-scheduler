@@ -168,7 +168,7 @@ class ApiService {
     return this.request('/jobs');
   }
 
-  async createJob(command, schedule, username) {
+  async createJob(command, schedule) {
     const agents = await this.getAgents();
     if (!agents.length) {
       throw new Error("No agents available to assign the job.");
@@ -178,7 +178,7 @@ class ApiService {
 
     return this.request('/jobs', {
       method: 'POST',
-      body: JSON.stringify({ command, schedule, agentId, username }),
+      body: JSON.stringify({ command, schedule, agentId}),
     });
   }
 

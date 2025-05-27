@@ -199,8 +199,6 @@ app.get('/protected', authenticateToken, (req, res) => {
   res.json({ message: `Hello ${req.user.username}, you are authorized.` });
 });
 
-
-
 // Dummy Data
 async function seedDemoData() {
   const password_hash = await bcrypt.hash("123456", 10);
@@ -234,16 +232,13 @@ async function seedDemoData() {
   console.log(token);
 }
 
-
 // ====================================
 // Start Server and Sync DB
 // ====================================
 db.sequelize.sync({ force: false }).then(async () => {
-  // !!!!!!!!!!
-  //console.log("⚠️ SQLite DB dropped and recreated."); // development bittikten sonra burayı kaldır(force:true)'da kaldır!
-  console.log("✅ SQLite database connected.");
+  console.log("SQLite database connected.");
   //await seedDemoData();
   app.listen(PORT, () => {
-    console.log(`🚀 Server is running on http://localhost:${PORT}`);
+    console.log(`Server is running on http://localhost:${PORT}`);
   });
 });
