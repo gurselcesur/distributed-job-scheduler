@@ -237,8 +237,7 @@ async function seedDemoData() {
 // ====================================
 db.sequelize.sync({ force: false }).then(async () => {
   console.log("SQLite database connected.");
-  //await seedDemoData();
-  app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
+  app.listen(PORT,() => {
+    console.log(`Server running on http://localhost:${PORT}`);
   });
 });
