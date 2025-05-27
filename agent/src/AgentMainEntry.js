@@ -4,8 +4,9 @@ const { setToken } = require('./utils/tokenStore');
 const { registerAgent } = require('./services/agentService');
 const { startScheduler } = require('./core/jobScheduler');
 const { startHeartbeat } = require('./services/heartbeatService');
+const { startWebSocketClient } = require('./services/wsClient');
 
-const SERVER_URL = 'http://localhost:3000';
+const SERVER_URL = 'https://84ca-88-230-89-0.ngrok-free.app'; // relay-server
 
 // Setup readline interface
 const rl = readline.createInterface({
@@ -35,6 +36,7 @@ async function login() {
   const agentId = await registerAgent();
   startHeartbeat(agentId);
   startScheduler(agentId);
+  startWebSocketClient(agentId);
 
   rl.close(); // Close CLI after login and setup
 })();

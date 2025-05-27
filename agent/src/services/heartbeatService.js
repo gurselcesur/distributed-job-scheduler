@@ -1,5 +1,5 @@
 const axios = require('axios');
-const SERVER_URL = 'http://localhost:3000';
+const SERVER_URL = 'https://84ca-88-230-89-0.ngrok-free.app';
 
 function startHeartbeat(agentId) {
   setInterval(async () => {
