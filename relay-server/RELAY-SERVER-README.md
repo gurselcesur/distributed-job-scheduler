@@ -95,6 +95,56 @@ Registers a new agent.
 }
 ```
 
+### 📋 Job Endpoints
+
+#### POST /jobs
+Create a new scheduled job (authenticated).
+
+**Headers:**
+Authorization: Bearer YOUR_TOKEN  
+Content-Type: application/json
+
+**Body:**
+```json
+{
+  "command": "echo Hello",
+  "schedule": "*/5 * * * *",
+  "agentId": 1
+}
+```
+
+---
+
+#### GET /jobs
+Returns the jobs created by the authenticated user, with agent info.
+
+**Headers:**
+Authorization: Bearer YOUR_TOKEN
+
+**Response:**
+```json
+[
+  {
+    "id": 1,
+    "command": "echo Hello",
+    "schedule": "*/5 * * * *",
+    "agentId": 1,
+    "Agent": {
+      "hostname": "my-laptop",
+      "ip": "192.168.1.55"
+    }
+  }
+]
+```
+
+---
+
+### 🧠 Job Notes
+- `schedule` uses standard cron format (e.g., `*/5 * * * *`)
+- Jobs are linked to a specific agent using `agentId`
+- Only the owner user (via JWT) can see their jobs
+
+
 ### 🔒 Protected Example
 
 #### GET /protected
@@ -154,7 +204,6 @@ database.sqlite
 
 ## 🚀 Next Steps
 
-- Add job management endpoints (/jobs)
 - Add agent-heartbeat and scheduling logic
 - Add frontend UI
 - Add Docker support

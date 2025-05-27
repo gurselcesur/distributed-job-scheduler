@@ -2,17 +2,16 @@ cron-scheduler/
 ├── agent/                          # Kullanıcının bilgisayarında çalışacak
 │   ├── src/
 │   │   ├── services/
-│   │   │   ├── cronService.js      # Cron job yönetimi
-│   │   │   ├── tunnelService.js    # Tunnel bağlantısı
-│   │   │   └── authService.js      # Kimlik doğrulama
-│   │   ├── models/
-│   │   │   └── LocalJob.js
+│   │   │   ├── agentService.js     # registerAgent, getIPAddress
+│   │   │   └── apiService.js       # fetchJobs, updateJobStatus
+│   │   ├── core/
+│   │   │   ├── jobScheduler.js     # fetch + run loop
+│   │   │   └── jobRunner.js        # tek bir job'ı çalıştırır
 │   │   ├── utils/
-│   │   │   ├── systemInfo.js       # Sistem bilgileri
-│   │   │   └── security.js
-│   │   └── agent.js
+│   │   │   └── cronUtils.js        # isJobDue
+│   │   └── bootstrap.js            # ana başlatıcı
 │   └── package.json
-├── relay-server/                    # Merkezi relay sunucusu
+├── relay-server/                   # Merkezi relay sunucusu
 │   ├── src/
 │   │   ├── services/
 │   │   │   ├── tunnelManager.js    # Agent bağlantıları yönetimi
