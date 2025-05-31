@@ -1,3 +1,5 @@
+const http = require('http');
+const{ startWebSocketServer } = require('./wsServer');
 const express = require('express');
 const cors = require('cors');
 const db = require('./models');
@@ -205,7 +207,9 @@ app.delete('/jobs/:id', authenticateToken, async (req, res) => {
 // ====================================
 db.sequelize.sync({ force: false }).then(async () => {
   console.log("SQLite database connected.");
-  app.listen(PORT, () => {
+  const server = http.createServer(app);
+  startWebSocketServer(server);
+  server.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
   });
 });
