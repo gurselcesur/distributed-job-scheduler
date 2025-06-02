@@ -1,7 +1,7 @@
 const axios = require('axios');
 const { getToken } = require('../utils/tokenStore');
 
-const SERVER_URL = 'https://84ca-88-230-89-0.ngrok-free.app';
+const SERVER_URL = 'https://***********.ngrok-free.app';
 
 async function fetchJobs() {
   const token = getToken();

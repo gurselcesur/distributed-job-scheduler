@@ -6,7 +6,7 @@ const os = require('os');
 const axios = require('axios');
 
 // URL of the central server where agents register themselves
-const SERVER_URL = 'https://84ca-88-230-89-0.ngrok-free.app';
+const SERVER_URL = 'https://***********.ngrok-free.app';
 
 // Retrieves the first non-internal IPv4 address of the machine
 function getIPAddress() {

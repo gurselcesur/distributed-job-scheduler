@@ -4,7 +4,7 @@ const { exec } = require('child_process');
 const { updateJobStatus } = require('./apiService');
 const AGENT_ID = process.env.AGENT_ID || null;
 
-const WS_URL = 'wss://84ca-88-230-89-0.ngrok-free.app';       // WebSocket
+const WS_URL = 'wss://***********.ngrok-free.app';       // WebSocket
 
 function startWebSocketClient(agentId) {
   const ws = new WebSocket(WS_URL);

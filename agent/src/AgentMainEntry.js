@@ -6,7 +6,7 @@ const { startScheduler } = require('./core/jobScheduler');
 const { startHeartbeat } = require('./services/heartbeatService');
 const { startWebSocketClient } = require('./services/wsClient');
 
-const SERVER_URL = 'https://84ca-88-230-89-0.ngrok-free.app'; // relay-server
+const SERVER_URL = 'https://***********.ngrok-free.app'; // relay-server
 
 // Setup readline interface
 const rl = readline.createInterface({
